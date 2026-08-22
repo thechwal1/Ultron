@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/btnTalk"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Talk to Ultron" />
+
+            <Button
+                android:id="@+id/btnSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <Switch
+                android:id="@+id/toggleWakeWord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wake Word" />
+
+            <Switch
+                android:id="@+id/toggleNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Notification Reader" />
+
+            <Switch
+                android:id="@+id/toggleAppLaunch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="App Launch" />
+
+            <Switch
+                android:id="@+id/toggleDeepVoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Deep Voice" />
+
+            <Switch
+                android:id="@+id/toggleLearning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Learning Cache" />
+
+            <Switch
+                android:id="@+id/toggleFloatingOrb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Floating Orb" />
+
+            <Button
+                android:id="@+id/btnAccessibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Accessibility Settings" />
+
+            <Button
+                android:id="@+id/btnLatency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Latency Stats" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.drawerlayout.widget.DrawerLayout>
