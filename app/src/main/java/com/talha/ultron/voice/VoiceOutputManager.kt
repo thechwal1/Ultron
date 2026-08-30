@@ -18,7 +18,7 @@ class VoiceOutputManager(
 ) {
 
     private var ready = false
-    private val tts: TextToSpeech
+    private lateinit var tts: TextToSpeech
 
     init {
         tts = TextToSpeech(context) { status ->

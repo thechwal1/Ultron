@@ -28,7 +28,7 @@ class NetworkMonitor(context: Context) {
                 trySend(false)
             }
             override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
-                trySend(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
+                trySend(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
             }
         }
         val request = NetworkRequest.Builder()
@@ -42,7 +42,9 @@ class NetworkMonitor(context: Context) {
     fun isOnlineNow(): Boolean {
         val network = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-               capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        // Deliberately NOT requiring NET_CAPABILITY_VALIDATED — Android's
+        // validation ping can fail or lag on some networks even when
+        // internet genuinely works, causing false "offline" readings.
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 }

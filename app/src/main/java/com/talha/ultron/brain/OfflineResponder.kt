@@ -12,13 +12,12 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class OfflineResponder(private val context: Context? = null) {
 
-    // These are accessed from the companion object intents, so they must be companion properties
-    companion object {
-        private var lastTopic: String? = null
+            private var lastTopic: String? = null
         private var lastAnswer: String? = null
         private var lastUserInput: String? = null
 
@@ -98,7 +97,7 @@ class OfflineResponder(private val context: Context? = null) {
                 },
                 IntentRule("power", Regex("""(?i)(\d+\s*(power|to the power|\^|raised to)\s*\d+)""")) { input ->
                     val nums = extractNumbers(input)
-                    if (nums.size >= 2) "${nums[0]} to the power of ${nums[1]} is ${formatNumber(kotlin.math.pow(nums[0], nums[1]))}."
+                    if (nums.size >= 2) "${nums[0]} to the power of ${nums[1]} is ${formatNumber(nums[0].pow(nums[1]))}."
                     else "I need two numbers for that calculation."
                 },
                 IntentRule("temperature_c_to_f", Regex("""(?i)(\d+\s*(celsius|\u00B0c|c)\s*(to|in)\s*(fahrenheit|\u00B0f|f))""")) { input ->
@@ -193,10 +192,9 @@ class OfflineResponder(private val context: Context? = null) {
             )
         }
 
-        private fun currentTime(): String = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date())
-        private fun currentDate(): String = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date())
-        private fun currentDayOfWeek(): String = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date())
-    }
+    private fun currentTime(): String = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date())
+    private fun currentDate(): String = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date())
+    private fun currentDayOfWeek(): String = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date())
 
     fun respond(input: String): String {
         lastUserInput = input
@@ -269,7 +267,7 @@ class OfflineResponder(private val context: Context? = null) {
         if (powerMatch != null) {
             val base = powerMatch.groupValues[1].toDoubleOrNull() ?: return "I couldn't parse that number."
             val exp = powerMatch.groupValues[2].toDoubleOrNull() ?: return "I couldn't parse that number."
-            return "$base ^ $exp = ${formatNumber(kotlin.math.pow(base, exp))}"
+            return "$base ^ $exp = ${formatNumber(base.pow(exp))}"
         }
 
         val simplePattern = Regex("""(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)""")

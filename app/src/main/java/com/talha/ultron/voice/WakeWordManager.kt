@@ -7,7 +7,7 @@ import ai.picovoice.porcupine.Porcupine
  * Wake word detection via Picovoice Porcupine. Offline, low battery drain.
  * Requires PORVOICE_ACCESS_KEY in local.properties.
  */
-class WakeWordManager(context: Context, accessKey: String, onWake: () -> Unit) {
+class WakeWordManager(context: Context, accessKey: String, private val onWake: () -> Unit) {
 
     private val porcupine: Porcupine = Porcupine.Builder()
         .setAccessKey(accessKey)

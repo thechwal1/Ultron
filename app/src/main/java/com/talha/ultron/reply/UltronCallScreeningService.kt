@@ -3,6 +3,7 @@ package com.talha.ultron.reply
 import android.os.Build
 import android.telecom.Call
 import android.telecom.CallScreeningService
+import android.telecom.Connection
 import com.talha.ultron.SecureSettings
 
 class UltronCallScreeningService : CallScreeningService() {
@@ -29,7 +30,7 @@ class UltronCallScreeningService : CallScreeningService() {
         }
 
         if (settings.callAutoDeclineEnabled) {
-            if (!settings.callAutoDeclineOnlyUnknown || callDetails.callerNumberVerificationStatus == Call.Details.VERIFICATION_STATUS_NOT_VERIFIED) {
+            if (!settings.callAutoDeclineOnlyUnknown || callDetails.callerNumberVerificationStatus == Connection.VERIFICATION_STATUS_NOT_VERIFIED) {
                 respondToCall(callDetails, CallResponse.Builder()
                     .setDisallowCall(true)
                     .setRejectCall(true)
