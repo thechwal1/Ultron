@@ -70,24 +70,24 @@ class UltronNotificationService : NotificationListenerService() {
         }
     }
 
-    fun readLastNotification(): String {
+    suspend fun readLastNotification(): String {
         val notif = dao.recent(1).firstOrNull() ?: return "No notifications yet."
         return "${notif.title}: ${notif.text}"
     }
 
-    fun summarizeUnread(): String {
+    suspend fun summarizeUnread(): String {
         val unread = dao.unread()
         if (unread.isEmpty()) return "You have no unread notifications."
         return "You have ${unread.size} unread notifications. " +
             unread.take(5).joinToString(". ") { "${it.title}: ${it.text}" }
     }
 
-    fun readAllUnread(): String {
+    suspend fun readAllUnread(): String {
         val unread = dao.unread()
         if (unread.isEmpty()) return "No unread notifications."
         val text = unread.joinToString(". ") { "${it.title}: ${it.text}" }
         voiceOut?.speak(text)
-        scope.launch { dao.markAllRead() }
+        dao.markAllRead()
         return "Reading ${unread.size} notifications."
     }
 

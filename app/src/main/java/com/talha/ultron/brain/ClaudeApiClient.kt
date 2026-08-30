@@ -36,7 +36,7 @@ class ClaudeApiClient {
         })
 
         val requestBody = JSONObject().apply {
-            put("model", "claude-3-5-sonnet-20241022")
+            put("model", "claude-sonnet-5")
             put("max_tokens", 500)
             if (!systemPrompt.isNullOrBlank()) put("system", systemPrompt)
             put("messages", messagesArray)

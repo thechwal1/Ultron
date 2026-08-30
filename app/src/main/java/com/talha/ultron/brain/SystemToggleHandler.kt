@@ -18,8 +18,8 @@ class SystemToggleHandler(private val context: Context) {
     private val flashlightPattern = Pattern.compile("(?i)(turn (on|off) flashlight|toggle flashlight|flashlight)")
     private val wifiPattern = Pattern.compile("(?i)(turn (on|off) wifi|toggle wifi|wifi (on|off))")
     private val bluetoothPattern = Pattern.compile("(?i)(turn (on|off) bluetooth|toggle bluetooth|bluetooth (on|off))")
-    private val brightnessPattern = Pattern.compile("(?i)set brightness (\d+)%?")
-    private val volumePattern = Pattern.compile("(?i)set volume (\d+)%?")
+    private val brightnessPattern = Pattern.compile("(?i)set brightness (\\d+)%?")
+    private val volumePattern = Pattern.compile("(?i)set volume (\\d+)%?")
 
     fun tryHandle(input: String): String? {
         val flashMatcher = flashlightPattern.matcher(input)

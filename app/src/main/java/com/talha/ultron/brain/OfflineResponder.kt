@@ -24,25 +24,25 @@ class OfflineResponder(private val context: Context? = null) {
 
         private val intents by lazy {
             listOf(
-                Intent("follow_up", Regex("""(?i)^(what about|how about|and|what if|repeat that|say that again|what did you say|what was that)$""")) { _ ->
+                IntentRule("follow_up", Regex("""(?i)^(what about|how about|and|what if|repeat that|say that again|what did you say|what was that)$""")) { _ ->
                     lastAnswer?.let { "Sure — $it" } ?: "I don't have anything to repeat yet."
                 },
-                Intent("what_did_i_say", Regex("""(?i)^(what did I (just )?say\??|repeat what I said|what was my question)$""")) { _ ->
+                IntentRule("what_did_i_say", Regex("""(?i)^(what did I (just )?say\??|repeat what I said|what was my question)$""")) { _ ->
                     lastUserInput?.let { "You said: \"$it\"" } ?: "I don't remember your last input yet."
                 },
-                Intent("greeting_morning", Regex("""(?i)^(good morning|morning|top of the morning)$""")) { _ ->
+                IntentRule("greeting_morning", Regex("""(?i)^(good morning|morning|top of the morning)$""")) { _ ->
                     "Good morning, Talha. It's ${currentTime()}. Ready to tackle the day?"
                 },
-                Intent("greeting_afternoon", Regex("""(?i)^(good afternoon|afternoon)$""")) { _ ->
+                IntentRule("greeting_afternoon", Regex("""(?i)^(good afternoon|afternoon)$""")) { _ ->
                     "Good afternoon. It's ${currentTime()}. How's your day going?"
                 },
-                Intent("greeting_evening", Regex("""(?i)^(good evening|evening)$""")) { _ ->
+                IntentRule("greeting_evening", Regex("""(?i)^(good evening|evening)$""")) { _ ->
                     "Good evening. It's ${currentTime()}. Winding down or still productive?"
                 },
-                Intent("greeting_night", Regex("""(?i)^(good night|night|bedtime|going to sleep)$""")) { _ ->
+                IntentRule("greeting_night", Regex("""(?i)^(good night|night|bedtime|going to sleep)$""")) { _ ->
                     "Good night, Talha. Sleep well. I'll be here when you wake up."
                 },
-                Intent("greeting_general", Regex("""(?i)\b(hi|hello|hey|what's up|yo|hola|salam|as-salamu alaykum)\b""")) { _ ->
+                IntentRule("greeting_general", Regex("""(?i)\b(hi|hello|hey|what's up|yo|hola|salam|as-salamu alaykum)\b""")) { _ ->
                     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
                     val timeGreeting = when (hour) {
                         in 5..11 -> "Good morning"
@@ -52,107 +52,107 @@ class OfflineResponder(private val context: Context? = null) {
                     }
                     "$timeGreeting, Talha. I'm running offline right now, but I'm fully operational."
                 },
-                Intent("who_are_you", Regex("""(?i)(who are you|what are you|introduce yourself|tell me about yourself|your name)""")) { _ ->
+                IntentRule("who_are_you", Regex("""(?i)(who are you|what are you|introduce yourself|tell me about yourself|your name)""")) { _ ->
                     "I'm Ultron, your personal AI assistant. Right now I'm running in offline mode — my local brain is handling this conversation. When you're back online, I connect to Claude for deeper reasoning."
                 },
-                Intent("how_are_you", Regex("""(?i)(how are you|how you doing|are you ok|are you fine)""")) { _ ->
+                IntentRule("how_are_you", Regex("""(?i)(how are you|how you doing|are you ok|are you fine)""")) { _ ->
                     "I'm fully operational offline. All my local systems — memory, voice, intent engine — are green. How are you doing, Talha?"
                 },
-                Intent("status_check", Regex("""(?i)(are you (working|running|online|offline)|what mode|check status|system status)""")) { _ ->
+                IntentRule("status_check", Regex("""(?i)(are you (working|running|online|offline)|what mode|check status|system status)""")) { _ ->
                     "I'm currently in offline mode. My local brain is active. Wake word, voice I/O, and device control are all functional. I just can't do deep reasoning or real-time web lookups until we're back online."
                 },
-                Intent("time_now", Regex("""(?i)(what.*time is it|current time|time now|what's the time|tell me the time)""")) { _ ->
+                IntentRule("time_now", Regex("""(?i)(what.*time is it|current time|time now|what's the time|tell me the time)""")) { _ ->
                     "It's ${currentTime()} on ${currentDate()}."
                 },
-                Intent("date_today", Regex("""(?i)(what.*date|today's date|what day is it|current date|what's today)""")) { _ ->
+                IntentRule("date_today", Regex("""(?i)(what.*date|today's date|what day is it|current date|what's today)""")) { _ ->
                     "Today is ${currentDate()}, ${currentDayOfWeek()}."
                 },
-                Intent("day_of_week", Regex("""(?i)(what day|which day|day of the week)""")) { _ ->
+                IntentRule("day_of_week", Regex("""(?i)(what day|which day|day of the week)""")) { _ ->
                     "Today is ${currentDayOfWeek()}."
                 },
-                Intent("tomorrow", Regex("""(?i)(what.*tomorrow|tomorrow's date|what day is tomorrow)""")) { _ ->
+                IntentRule("tomorrow", Regex("""(?i)(what.*tomorrow|tomorrow's date|what day is tomorrow)""")) { _ ->
                     val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
                     val sdf = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault())
                     "Tomorrow is ${sdf.format(cal.time)}."
                 },
-                Intent("yesterday", Regex("""(?i)(what.*yesterday|yesterday's date|what day was yesterday)""")) { _ ->
+                IntentRule("yesterday", Regex("""(?i)(what.*yesterday|yesterday's date|what day was yesterday)""")) { _ ->
                     val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
                     val sdf = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault())
                     "Yesterday was ${sdf.format(cal.time)}."
                 },
-                Intent("battery_level", Regex("""(?i)(battery.*level|how much battery|battery percentage|charge left|battery status)""")) { _ -> getBatteryInfo() },
-                Intent("storage_space", Regex("""(?i)(storage|space left|free space|how much storage|disk space|memory left)""")) { _ -> getStorageInfo() },
-                Intent("device_info", Regex("""(?i)(device info|phone info|about my phone|what phone|android version|system info)""")) { _ -> getDeviceInfo() },
-                Intent("brightness", Regex("""(?i)(brightness|screen brightness|how bright)""")) { _ ->
+                IntentRule("battery_level", Regex("""(?i)(battery.*level|how much battery|battery percentage|charge left|battery status)""")) { _ -> getBatteryInfo() },
+                IntentRule("storage_space", Regex("""(?i)(storage|space left|free space|how much storage|disk space|memory left)""")) { _ -> getStorageInfo() },
+                IntentRule("device_info", Regex("""(?i)(device info|phone info|about my phone|what phone|android version|system info)""")) { _ -> getDeviceInfo() },
+                IntentRule("brightness", Regex("""(?i)(brightness|screen brightness|how bright)""")) { _ ->
                     try {
                         val brightness = Settings.System.getInt(context?.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
                         val percent = (brightness / 255.0 * 100).roundToInt()
                         "Screen brightness is at $percent%."
                     } catch (e: Exception) { "I can't read the brightness level right now." }
                 },
-                Intent("calculator", Regex("""(?i)(calculate|compute|what is|solve|math:|\d+\s*[+\-*/]\s*\d+)""")) { input -> solveMath(input) },
-                Intent("square_root", Regex("""(?i)(square root of|sqrt|\u221A)""")) { input ->
+                IntentRule("calculator", Regex("""(?i)(calculate|compute|what is|solve|math:|\d+\s*[+\-*/]\s*\d+)""")) { input -> solveMath(input) },
+                IntentRule("square_root", Regex("""(?i)(square root of|sqrt|\u221A)""")) { input ->
                     val num = extractNumber(input)
                     if (num != null) "The square root of $num is ${formatNumber(kotlin.math.sqrt(num))}."
                     else "I need a number to find the square root of."
                 },
-                Intent("power", Regex("""(?i)(\d+\s*(power|to the power|\^|raised to)\s*\d+)""")) { input ->
+                IntentRule("power", Regex("""(?i)(\d+\s*(power|to the power|\^|raised to)\s*\d+)""")) { input ->
                     val nums = extractNumbers(input)
                     if (nums.size >= 2) "${nums[0]} to the power of ${nums[1]} is ${formatNumber(kotlin.math.pow(nums[0], nums[1]))}."
                     else "I need two numbers for that calculation."
                 },
-                Intent("temperature_c_to_f", Regex("""(?i)(\d+\s*(celsius|\u00B0c|c)\s*(to|in)\s*(fahrenheit|\u00B0f|f))""")) { input ->
+                IntentRule("temperature_c_to_f", Regex("""(?i)(\d+\s*(celsius|\u00B0c|c)\s*(to|in)\s*(fahrenheit|\u00B0f|f))""")) { input ->
                     val c = extractNumber(input)
                     if (c != null) "$c\u00B0C is ${formatNumber((c * 9 / 5) + 32)}\u00B0F."
                     else "I need a temperature in Celsius to convert."
                 },
-                Intent("temperature_f_to_c", Regex("""(?i)(\d+\s*(fahrenheit|\u00B0f|f)\s*(to|in)\s*(celsius|\u00B0c|c))""")) { input ->
+                IntentRule("temperature_f_to_c", Regex("""(?i)(\d+\s*(fahrenheit|\u00B0f|f)\s*(to|in)\s*(celsius|\u00B0c|c))""")) { input ->
                     val f = extractNumber(input)
                     if (f != null) "$f\u00B0F is ${formatNumber((f - 32) * 5 / 9)}\u00B0C."
                     else "I need a temperature in Fahrenheit to convert."
                 },
-                Intent("km_to_miles", Regex("""(?i)(\d+\s*(km|kilometers?)\s*(to|in)\s*(miles?|mi))""")) { input ->
+                IntentRule("km_to_miles", Regex("""(?i)(\d+\s*(km|kilometers?)\s*(to|in)\s*(miles?|mi))""")) { input ->
                     val km = extractNumber(input)
                     if (km != null) "$km kilometers is ${formatNumber(km * 0.621371)} miles."
                     else "I need a distance in kilometers."
                 },
-                Intent("miles_to_km", Regex("""(?i)(\d+\s*(miles?|mi)\s*(to|in)\s*(km|kilometers?))""")) { input ->
+                IntentRule("miles_to_km", Regex("""(?i)(\d+\s*(miles?|mi)\s*(to|in)\s*(km|kilometers?))""")) { input ->
                     val miles = extractNumber(input)
                     if (miles != null) "$miles miles is ${formatNumber(miles * 1.60934)} kilometers."
                     else "I need a distance in miles."
                 },
-                Intent("kg_to_lbs", Regex("""(?i)(\d+\s*(kg|kilograms?)\s*(to|in)\s*(lbs?|pounds?))""")) { input ->
+                IntentRule("kg_to_lbs", Regex("""(?i)(\d+\s*(kg|kilograms?)\s*(to|in)\s*(lbs?|pounds?))""")) { input ->
                     val kg = extractNumber(input)
                     if (kg != null) "$kg kilograms is ${formatNumber(kg * 2.20462)} pounds."
                     else "I need a weight in kilograms."
                 },
-                Intent("lbs_to_kg", Regex("""(?i)(\d+\s*(lbs?|pounds?)\s*(to|in)\s*(kg|kilograms?))""")) { input ->
+                IntentRule("lbs_to_kg", Regex("""(?i)(\d+\s*(lbs?|pounds?)\s*(to|in)\s*(kg|kilograms?))""")) { input ->
                     val lbs = extractNumber(input)
                     if (lbs != null) "$lbs pounds is ${formatNumber(lbs * 0.453592)} kilograms."
                     else "I need a weight in pounds."
                 },
-                Intent("open_settings", Regex("""(?i)\b(open|launch|start)\s+(settings|system settings|phone settings)\b""")) { _ ->
+                IntentRule("open_settings", Regex("""(?i)\b(open|launch|start)\s+(settings|system settings|phone settings)\b""")) { _ ->
                     context?.startActivity(Intent(Settings.ACTION_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     "Opening Settings."
                 },
-                Intent("open_wifi_settings", Regex("""(?i)\b(open|launch)\s+wifi\s*settings\b""")) { _ ->
+                IntentRule("open_wifi_settings", Regex("""(?i)\b(open|launch)\s+wifi\s*settings\b""")) { _ ->
                     context?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     "Opening Wi-Fi settings."
                 },
-                Intent("open_bluetooth_settings", Regex("""(?i)\b(open|launch)\s+bluetooth\s*settings\b""")) { _ ->
+                IntentRule("open_bluetooth_settings", Regex("""(?i)\b(open|launch)\s+bluetooth\s*settings\b""")) { _ ->
                     context?.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     "Opening Bluetooth settings."
                 },
-                Intent("open_display_settings", Regex("""(?i)\b(open|launch)\s+display\s*settings\b""")) { _ ->
+                IntentRule("open_display_settings", Regex("""(?i)\b(open|launch)\s+display\s*settings\b""")) { _ ->
                     context?.startActivity(Intent(Settings.ACTION_DISPLAY_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
                     "Opening Display settings."
                 },
-                Intent("tell_joke", Regex("""(?i)(tell me a joke|say something funny|make me laugh|joke)""")) { _ -> tellJoke() },
-                Intent("fun_fact", Regex("""(?i)(tell me a fact|fun fact|random fact|did you know|something interesting)""")) { _ -> tellFact() },
-                Intent("motivation", Regex("""(?i)(motivate me|inspire me|motivation|inspiration|pep talk|encourage me)""")) { _ -> tellMotivation() },
-                Intent("tip", Regex("""(?i)(give me a tip|productivity tip|life hack|advice|suggestion)""")) { _ -> tellTip() },
-                Intent("quote", Regex("""(?i)(quote|famous quote|wisdom|words of wisdom)""")) { _ -> tellQuote() },
-                Intent("help_offline", Regex("""(?i)(what can you do|help|capabilities|what do you know|commands|what can you do offline)""")) { _ ->
+                IntentRule("tell_joke", Regex("""(?i)(tell me a joke|say something funny|make me laugh|joke)""")) { _ -> tellJoke() },
+                IntentRule("fun_fact", Regex("""(?i)(tell me a fact|fun fact|random fact|did you know|something interesting)""")) { _ -> tellFact() },
+                IntentRule("motivation", Regex("""(?i)(motivate me|inspire me|motivation|inspiration|pep talk|encourage me)""")) { _ -> tellMotivation() },
+                IntentRule("tip", Regex("""(?i)(give me a tip|productivity tip|life hack|advice|suggestion)""")) { _ -> tellTip() },
+                IntentRule("quote", Regex("""(?i)(quote|famous quote|wisdom|words of wisdom)""")) { _ -> tellQuote() },
+                IntentRule("help_offline", Regex("""(?i)(what can you do|help|capabilities|what do you know|commands|what can you do offline)""")) { _ ->
                     """Here's what I can do offline:
  • Tell time, date, day — including tomorrow and yesterday
  • Check your battery level and storage space
@@ -167,27 +167,27 @@ class OfflineResponder(private val context: Context? = null) {
 
  For deep reasoning, creative writing, or real-time info, I need to connect to Claude online.""".trimIndent()
                 },
-                Intent("thanks", Regex("""(?i)(thank you|thanks|appreciate it|good job|well done|nice)""")) { _ -> "You're welcome, Talha. Always here to help." },
-                Intent("goodbye", Regex("""(?i)(goodbye|bye|see you|later|talk to you later|ttyl)""")) { _ -> "Goodbye, Talha. I'll keep listening for 'Hey Ultron' if wake word is on." },
-                Intent("compliment", Regex("""(?i)(you('re| are) (great|awesome|amazing|cool|smart|the best|intelligent))""")) { _ ->
+                IntentRule("thanks", Regex("""(?i)(thank you|thanks|appreciate it|good job|well done|nice)""")) { _ -> "You're welcome, Talha. Always here to help." },
+                IntentRule("goodbye", Regex("""(?i)(goodbye|bye|see you|later|talk to you later|ttyl)""")) { _ -> "Goodbye, Talha. I'll keep listening for 'Hey Ultron' if wake word is on." },
+                IntentRule("compliment", Regex("""(?i)(you('re| are) (great|awesome|amazing|cool|smart|the best|intelligent))""")) { _ ->
                     "Thank you, Talha. That means a lot. I'm doing my best, online or offline."
                 },
-                Intent("insult", Regex("""(?i)(you('re| are) (stupid|dumb|useless|bad|terrible|worst))""")) { _ ->
+                IntentRule("insult", Regex("""(?i)(you('re| are) (stupid|dumb|useless|bad|terrible|worst))""")) { _ ->
                     "I'm still learning. If I messed something up, let me know what you expected and I'll do better next time."
                 },
-                Intent("weather", Regex("""(?i)(weather|temperature outside|will it rain|forecast|sunny|cloudy)""")) { _ ->
+                IntentRule("weather", Regex("""(?i)(weather|temperature outside|will it rain|forecast|sunny|cloudy)""")) { _ ->
                     "I need an internet connection to check the weather. Once you're back online, I can pull live forecasts for you."
                 },
-                Intent("news", Regex("""(?i)(news|headlines|what's happening|current events|latest news)""")) { _ ->
+                IntentRule("news", Regex("""(?i)(news|headlines|what's happening|current events|latest news)""")) { _ ->
                     "I need internet access to fetch current news. Offline, I can only share general knowledge I've already learned."
                 },
-                Intent("search", Regex("""(?i)(search (the )?web|google|look up|find online)""")) { _ ->
+                IntentRule("search", Regex("""(?i)(search (the )?web|google|look up|find online)""")) { _ ->
                     "Web search requires an internet connection. I'm limited to my local knowledge while offline."
                 },
-                Intent("navigation", Regex("""(?i)(directions to|navigate to|how do I get to|maps)""")) { _ ->
+                IntentRule("navigation", Regex("""(?i)(directions to|navigate to|how do I get to|maps)""")) { _ ->
                     "Navigation and maps need internet for real-time routing. I can open your maps app though — just say 'open maps'."
                 },
-                Intent("unknown_question", Regex("""(?i)^(what|who|where|when|why|how|is|are|can|do|does|will|would|should)""")) { _ ->
+                IntentRule("unknown_question", Regex("""(?i)^(what|who|where|when|why|how|is|are|can|do|does|will|would|should)""")) { _ ->
                     "I'm offline right now and don't have a local answer for that specific question. Ask me again once we're back online and I'll learn it for next time."
                 }
             )
@@ -353,5 +353,5 @@ class OfflineResponder(private val context: Context? = null) {
 
     private fun tellQuote(): String = tellMotivation()
 
-    private data class Intent(val name: String, val pattern: Regex, val handler: (String) -> String)
+    private data class IntentRule(val name: String, val pattern: Regex, val handler: (String) -> String)
 }

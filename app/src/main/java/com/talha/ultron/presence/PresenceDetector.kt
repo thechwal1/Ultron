@@ -42,7 +42,10 @@ class PresenceDetector(private val context: Context) : SensorEventListener {
 
         if (settings.presenceUseBluetooth) {
             val bt = bluetoothManager?.adapter
-            val connected = bt?.bondedDevices?.any { it.isConnected } ?: false
+            val connected = bt?.bondedDevices?.any { device ->
+                bluetoothManager.getConnectionState(device, android.bluetooth.BluetoothProfile.GATT) ==
+                    android.bluetooth.BluetoothProfile.STATE_CONNECTED
+            } ?: false
             checks.add("Bluetooth wearable ${if (connected) "connected" else "not connected"}")
         }
 

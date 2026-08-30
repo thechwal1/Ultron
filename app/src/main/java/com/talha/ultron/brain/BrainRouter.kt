@@ -223,7 +223,7 @@ class BrainRouter(
         val steps = stepsRaw.split(";").map { it.trim() }.filter { it.isNotEmpty() }
         if (steps.isEmpty()) return null
         macroDao.insert(MacroEntity(name = name, steps = steps.joinToString("\n"), createdAt = System.currentTimeMillis()))
-        return "Macro '$name' saved with ${steps.size} step${if (steps.size != 1) "s" else ""}. Say "$name" to use it."
+        return "Macro '$name' saved with ${steps.size} step${if (steps.size != 1) "s" else ""}. Say '$name' to use it."
     }
 
     private suspend fun tryHandleMacroRun(input: String): String? {
@@ -231,7 +231,7 @@ class BrainRouter(
         val name = match.groupValues[1].trim()
         val macro = macroDao.findByName(name) ?: return null
         val steps = macro.steps.split("\n").filter { it.isNotBlank() }
-        val results = steps.map { step -> tryLocalStepOnly(step) ?: "(skipped: "$step" needs the AI, not supported inside macros)" }
+        val results = steps.map { step -> tryLocalStepOnly(step) ?: "(skipped: '$step' needs the AI, not supported inside macros)" }
         return "Running '$name':\n" + results.joinToString("\n") { "• $it" }
     }
 }

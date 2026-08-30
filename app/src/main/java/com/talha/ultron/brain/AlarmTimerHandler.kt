@@ -16,11 +16,11 @@ class AlarmTimerHandler(private val context: Context) {
 
     private val alarmPattern = Pattern.compile(
         "(?i)set (?:an? )?alarm (?:for )?" +
-        "(\d{1,2})(?::(\d{2}))?\s*(am|pm)?"
+        "(\\d{1,2})(?::(\\d{2}))?\\s*(am|pm)?"
     )
     private val timerPattern = Pattern.compile(
         "(?i)set (?:a )?timer (?:for )?" +
-        "(\d+)\s*(second|minute|hour|min|sec|hr)s?"
+        "(\\d+)\\s*(second|minute|hour|min|sec|hr)s?"
     )
 
     fun tryHandle(input: String): String? {
